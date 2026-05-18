@@ -1,6 +1,7 @@
 <h1>ExpNo 8 : Solve Cryptarithmetic Problem,a CSP(Constraint Satisfaction Problem) using Python</h1> 
-<h3>Name:               </h3>
-<h3>Register Number/Staff Id:       </h3>
+<h3>Name:DIVYADARSHINI M</h3>
+<h3>Register Number:212224060072</h3>
+
 <H3>Aim:</H3>
 <p>
     To solve Cryptarithmetic Problem,a CSP(Constraint Satisfaction Problem) using Python
@@ -78,5 +79,89 @@ MORE = 1085<br>
 <hr>
 MONEY = 10652<br>
 <hr>
+
+<h3>Program:</h3>
+
+```
+import itertools
+
+def solve_cryptarithmetic(addends, result, find_all=False, verbose=False):
+    words = addends + [result]
+
+    # Extract all unique letters
+    letters = []
+    for w in words:
+        for ch in w:
+            if ch not in letters:
+                letters.append(ch)
+
+    if len(letters) > 10:
+        raise ValueError("Too many letters. Max 10 allowed.")
+
+    # Leading letters cannot be zero
+    leading = {w[0] for w in words}
+
+    def word_value(word, mapping):
+        val = 0
+        for c in word:
+            val = val * 10 + mapping[c]
+        return val
+
+    solutions = []
+
+    for perm in itertools.permutations(range(10), len(letters)):
+        mapping = dict(zip(letters, perm))
+
+        # Leading zero check
+        if any(mapping[ch] == 0 for ch in leading):
+            continue
+
+        # Compute sum of addends
+        add_sum = sum(word_value(w, mapping) for w in addends)
+        result_val = word_value(result, mapping)
+
+        if add_sum == result_val:
+            solutions.append(mapping.copy())
+            if not find_all:
+                return mapping
+
+    return solutions if find_all else (solutions[0] if solutions else None)
+
+
+# -------------------------------
+# NEW EXAMPLE
+# BASE + BALL = GAMES
+# -------------------------------
+if __name__ == "__main__":
+
+    addends = ["BASE", "BALL"]
+    result = "GAMES"
+
+    solution = solve_cryptarithmetic(addends, result)
+
+    if solution:
+        print("\nSolution Found:")
+        for k in sorted(solution):
+            print(f"{k} -> {solution[k]}")
+
+        def num(word):
+            return int("".join(str(solution[ch]) for ch in word))
+
+        print("\nCheck:")
+        print(f"{addends[0]} ({num(addends[0])})")
+        print(f"+ {addends[1]} ({num(addends[1])})")
+        print(f"= {result} ({num(result)})")
+
+    else:
+        print("No solution found.")
+```
+<hr>
+
+<h3>Output:</h3>
+
+<img width="434" height="375" alt="image" src="https://github.com/user-attachments/assets/94770e72-b676-4b7b-a4fb-62b768f2d489" />
+
+<hr>
+
 <h2>Result:</h2>
 <p> Thus a Cryptarithmetic Problem was solved using Python successfully</p>
