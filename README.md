@@ -85,81 +85,50 @@ MONEY = 10652<br>
 ```
 import itertools
 
-def solve_cryptarithmetic(addends, result, find_all=False, verbose=False):
-    words = addends + [result]
+def solve_cryptarithmetic(addends,result):
+    words=addends+[result]
+    letters=list(dict.fromkeys("".join(words)))
 
-    # Extract all unique letters
-    letters = []
-    for w in words:
-        for ch in w:
-            if ch not in letters:
-                letters.append(ch)
-
-    if len(letters) > 10:
+    if len(letters)>10:
         raise ValueError("Too many letters. Max 10 allowed.")
 
-    # Leading letters cannot be zero
-    leading = {w[0] for w in words}
+    lead={w[0] for w in words}
 
-    def word_value(word, mapping):
-        val = 0
-        for c in word:
-            val = val * 10 + mapping[c]
-        return val
+    for p in itertools.permutations(range(10),len(letters)):
+        m=dict(zip(letters,p))
 
-    solutions = []
-
-    for perm in itertools.permutations(range(10), len(letters)):
-        mapping = dict(zip(letters, perm))
-
-        # Leading zero check
-        if any(mapping[ch] == 0 for ch in leading):
+        if any(m[x]==0 for x in lead):
             continue
 
-        # Compute sum of addends
-        add_sum = sum(word_value(w, mapping) for w in addends)
-        result_val = word_value(result, mapping)
+        f=lambda w:int("".join(str(m[c]) for c in w))
 
-        if add_sum == result_val:
-            solutions.append(mapping.copy())
-            if not find_all:
-                return mapping
+        if sum(f(w) for w in addends)==f(result):
+            return m
 
-    return solutions if find_all else (solutions[0] if solutions else None)
+addends=["BASE","BALL"]
+result="GAMES"
+s=solve_cryptarithmetic(addends,result)
 
+if s:
+    print("\nSolution Found:")
+    for k in sorted(s):
+        print(f"{k} -> {s[k]}")
 
-# -------------------------------
-# NEW EXAMPLE
-# BASE + BALL = GAMES
-# -------------------------------
-if __name__ == "__main__":
+    print("\nCheck:")
+    for i,w in enumerate(addends):
+        print(f"{'+ ' if i else ''}{w} ({int(''.join(str(s[c]) for c in w))})")
 
-    addends = ["BASE", "BALL"]
-    result = "GAMES"
+    print(f"= {result} ({int(''.join(str(s[c]) for c in result))})")
 
-    solution = solve_cryptarithmetic(addends, result)
-
-    if solution:
-        print("\nSolution Found:")
-        for k in sorted(solution):
-            print(f"{k} -> {solution[k]}")
-
-        def num(word):
-            return int("".join(str(solution[ch]) for ch in word))
-
-        print("\nCheck:")
-        print(f"{addends[0]} ({num(addends[0])})")
-        print(f"+ {addends[1]} ({num(addends[1])})")
-        print(f"= {result} ({num(result)})")
-
-    else:
-        print("No solution found.")
+else:
+    print("No solution found.")
 ```
 <hr>
 
 <h3>Output:</h3>
 
-<img width="434" height="375" alt="image" src="https://github.com/user-attachments/assets/94770e72-b676-4b7b-a4fb-62b768f2d489" />
+<img width="417" height="319" alt="image" src="https://github.com/user-attachments/assets/88bb1183-e4f4-4cba-9898-87d9062567a3" />
+
 
 <hr>
 
